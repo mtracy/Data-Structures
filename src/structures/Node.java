@@ -1,3 +1,4 @@
+package structures;
 public class Node<V> {
 	V value;
 	Node<V> next;
