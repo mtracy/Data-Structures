@@ -16,6 +16,22 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 		this.head = null;
 	}
 
+	public Node<E> getHead() {
+		return head;
+	}
+
+	public void setHead(Node<E> head) {
+		this.head = head;
+	}
+
+	public Node<E> getTail() {
+		return tail;
+	}
+
+	public void setTail(Node<E> tail) {
+		this.tail = tail;
+	}
+
 	@Override
 	public boolean add(E elt) {
 		if (this.head == null) {
@@ -25,6 +41,21 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 			this.tail.next = new Node<E>(elt);
 			this.tail.next.prev = this.tail;
 			this.tail = this.tail.next;
+		}
+		this.size++;
+		return true;
+	}
+
+	public boolean add(Node<E> n) {
+		if (this.head == null) {
+			this.head = n;
+			this.tail = this.head;
+		} else {
+			this.tail.next = n;
+			n.prev = this.tail;
+			n.next = null;
+			this.tail = n;
+			
 		}
 		this.size++;
 		return true;
@@ -62,6 +93,44 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 
 			Node<E> temp = curr.next;
 			curr.next = new Node<E>(elt);
+			curr.next.next = temp;
+			curr.next.prev = curr;
+			temp.prev = curr.next;
+		}
+		this.size++;
+	}
+
+	public void add(int index, Node<E> n) {
+
+		if (index < 0 || index > this.size) {
+			throw new IndexOutOfBoundsException("Specified index " + index + " is greater than size " + size);
+		}
+
+		if (index == 0) {
+			Node<E> newhead = n;
+			newhead.next = this.head;
+			this.head.prev = newhead;
+			this.head = newhead;
+		} else if (index == this.size) {
+			Node<E> newtail = n;
+			newtail.prev = this.tail;
+			this.tail.next = newtail;
+			this.tail = newtail;
+		} else {
+			Node<E> curr;
+			if (index < (size >> 1)) {
+				for (curr = this.head; index > 1; index--) {
+					curr = curr.next;
+				}
+			} else {
+				index = this.size - 1 - index;
+				for (curr = this.tail; index >= 0; index--) {
+					curr = curr.prev;
+				}
+			}
+
+			Node<E> temp = curr.next;
+			curr.next = n;
 			curr.next.next = temp;
 			curr.next.prev = curr;
 			temp.prev = curr.next;
@@ -165,7 +234,7 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 		return new MyListIterator(index);
 	}
 
-	private E removeNode(Node<E> node) {
+	public E removeNode(Node<E> node) {
 		if (node.prev != null)
 			node.prev.next = node.next;
 		if (node.next != null)
@@ -174,6 +243,7 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 			head = head.next;
 		if (node == tail)
 			tail = tail.prev;
+		size--;
 		return node.value;
 	}
 
@@ -183,8 +253,6 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 			for (Node<E> e = head; e != null; e = e.next) {
 				if (e.value == null) {
 					removeNode(e);
-
-					size--;
 					return true;
 				}
 			}
@@ -192,7 +260,6 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 			for (Node<E> e = head; e != null; e = e.next) {
 				if (o.equals(e.value)) {
 					removeNode(e);
-					size--;
 					return true;
 				}
 			}
@@ -219,7 +286,6 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 				curr = curr.prev;
 			}
 		}
-		size--;
 		return removeNode(curr);
 	}
 
@@ -275,7 +341,7 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 				previous.next.prev = previous;
 				previous = previous.next;
 			}
-			if (current != null){
+			if (current != null) {
 				current.prev = previous;
 			}
 			size++;
@@ -332,7 +398,6 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 			if (lastreturned == null)
 				throw new IllegalStateException();
 			removeNode(lastreturned);
-			size--;
 		}
 
 		@Override
