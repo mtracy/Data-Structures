@@ -35,8 +35,8 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 	@Override
 	public boolean add(E elt) {
 		if (this.head == null) {
-			this.head = new Node<E>(elt);
-			this.tail = this.head;
+			setHead(new Node<E>(elt));
+			setTail(this.head);
 		} else {
 			this.tail.next = new Node<E>(elt);
 			this.tail.next.prev = this.tail;
@@ -332,9 +332,16 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 
 		@Override
 		public void add(E e) {
-			if (previous == null) {
+			if (size == 0){
+				current = null;
 				previous = new Node<E>(e);
 				previous.next = current;
+				head = previous;
+				tail = previous;
+			} else if (previous == null) {
+				previous = new Node<E>(e);
+				previous.next = current;
+				head = previous;
 			} else {
 				previous.next = new Node<E>(e);
 				previous.next.next = current;

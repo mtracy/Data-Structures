@@ -21,6 +21,7 @@ public class QuickQueueTest {
 		
 		try {
 			q.element();
+			fail();
 		} catch (NoSuchElementException e){
 			;;
 		}
@@ -29,6 +30,7 @@ public class QuickQueueTest {
 		
 		try {
 			q.remove();
+			fail();
 		} catch (NoSuchElementException e){
 			;;
 		}
@@ -112,6 +114,7 @@ public class QuickQueueTest {
 				
 		try {
 			q.update("nope");
+			fail();
 		} catch (NoSuchElementException e){
 			;;
 		}
@@ -162,6 +165,7 @@ public class QuickQueueTest {
 		
 		try {
 			q.element();
+			fail();
 		} catch (NoSuchElementException e){
 			;;
 		}
@@ -170,6 +174,7 @@ public class QuickQueueTest {
 		
 		try {
 			q.remove();
+			fail();
 		} catch (NoSuchElementException e){
 			;;
 		}
@@ -187,6 +192,7 @@ public class QuickQueueTest {
 		
 		try {
 			q.add("nope");
+			fail();
 		} catch (IllegalStateException e){
 			;;
 		}
@@ -260,6 +266,7 @@ public class QuickQueueTest {
 				
 		try {
 			q.update("nope");
+			fail();
 		} catch (NoSuchElementException e){
 			;;
 		}
@@ -296,6 +303,50 @@ public class QuickQueueTest {
 		
 		assertFalse(q.contains("whoops"));
 		
+		q.clear();
+		q.add("A");
+		q.add("really");
+		q.add("big");
+		q.add("foo");
+		q.offer("bar");
+		liststring = "[A, really, big, foo, bar]";
+		assertEquals(liststring, q.toString());
+		assertEquals(5, q.size());
+		
+		q.offer("push", true);
+		liststring = "[really, big, foo, bar, push]";
+		assertEquals(liststring, q.toString());
+		assertEquals(5, q.size());
+		
+		q.offer("push", true);
+		liststring = "[really, big, foo, bar, push]";
+		assertEquals(liststring, q.toString());
+		assertEquals(5, q.size());
+		
+		q.offer("push", false);
+		liststring = "[really, big, foo, bar, push]";
+		assertEquals(liststring, q.toString());
+		assertEquals(5, q.size());
+		
+		q.offer("nope", false);
+		liststring = "[really, big, foo, bar, push]";
+		assertEquals(liststring, q.toString());
+		assertEquals(5, q.size());
+		
+		q.offer("really", true);
+		liststring = "[big, foo, bar, push, really]";
+		assertEquals(liststring, q.toString());
+		assertEquals(5, q.size());
+		
+		q.offer("big", false);
+		liststring = "[foo, bar, push, really, big]";
+		assertEquals(liststring, q.toString());
+		assertEquals(5, q.size());
+		
+		
+		
 	}
+	
+	
 
 }

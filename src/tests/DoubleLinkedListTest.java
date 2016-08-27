@@ -2,13 +2,21 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import structures.DoubleLinkedList;
+import structures.Node;
 
 public class DoubleLinkedListTest {
+	
+	@Rule
+    public ExpectedException thrown= ExpectedException.none();
 
 	@Test
 	public void testAdd() {
@@ -20,10 +28,12 @@ public class DoubleLinkedListTest {
 
 		try {
 			dll.get(1);
+			fail();
 		} catch (IndexOutOfBoundsException e) {
 		}
 		try {
 			dll.get(-1);
+			fail();
 		} catch (IndexOutOfBoundsException e) {
 		}
 
@@ -34,6 +44,7 @@ public class DoubleLinkedListTest {
 
 		try {
 			dll.get(2);
+			fail();
 		} catch (IndexOutOfBoundsException e) {
 		}
 
@@ -87,6 +98,144 @@ public class DoubleLinkedListTest {
 		assertEquals("big", dll.get(3));
 		assertEquals("foo", dll.get(4));
 		assertEquals("bar", dll.get(5));
+		
+		dll.clear();
+		
+		dll.add("A");
+		dll.add("really");
+		dll.add("big");
+		dll.add("foo");
+		dll.add("bar");
+		
+		Node<String> n = new Node<String>("fiddle");
+		Node<String> n2 = new Node<String>("stick");
+		Node<String> n3 = new Node<String>("pepper");
+		Node<String> n4 = new Node<String>("giga");
+		
+		dll.add(0, n);
+		
+		String liststring = "[fiddle, A, really, big, foo, bar]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(6, dll.size());
+		
+		dll.add(2, n2);
+		
+		liststring = "[fiddle, A, stick, really, big, foo, bar]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(7, dll.size());
+		
+		
+		dll.add(n3);
+		
+		liststring = "[fiddle, A, stick, really, big, foo, bar, pepper]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(8, dll.size());
+		
+		dll.add(dll.size(), n4);
+		
+		liststring = "[fiddle, A, stick, really, big, foo, bar, pepper, giga]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(9, dll.size());
+		
+		dll.add(dll.size(), "byte");
+		
+		liststring = "[fiddle, A, stick, really, big, foo, bar, pepper, giga, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(10, dll.size());
+		
+		
+		dll.add(6, "deep");
+		liststring = "[fiddle, A, stick, really, big, foo, deep, bar, pepper, giga, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(11, dll.size());
+		
+		
+		dll.add(4, "small");
+		liststring = "[fiddle, A, stick, really, small, big, foo, deep, bar, pepper, giga, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(12, dll.size());
+		
+		dll.add(8, "huh");
+		liststring = "[fiddle, A, stick, really, small, big, foo, deep, huh, bar, pepper, giga, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(13, dll.size());
+		
+		dll.add(9, new Node<String>("oh"));
+		liststring = "[fiddle, A, stick, really, small, big, foo, deep, huh, oh, bar, pepper, giga, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(14, dll.size());
+		
+		try {dll.add(20, "nope"); fail();} catch(IndexOutOfBoundsException e){}
+		try {dll.add(-1, "nope"); fail();} catch(IndexOutOfBoundsException e){}
+		try {dll.add(20, new Node<String>("nope")); fail();} catch(IndexOutOfBoundsException e){}
+		try {dll.add(-1, new Node<String>("nope")); fail();} catch(IndexOutOfBoundsException e){}
+		
+		assertEquals("byte", dll.getTail().getValue());
+		
+		assertEquals(1, dll.indexOf("A"));
+		assertEquals(-1, dll.indexOf(null));
+		assertEquals(-1, dll.lastIndexOf(null));
+		n4.setValue(null);
+		assertEquals(12, dll.indexOf(null));
+		assertEquals(12, dll.lastIndexOf(null));
+		assertTrue(dll.remove(null));
+		assertFalse(dll.remove("billy"));
+		
+		ListIterator<String> iter = dll.listIterator();
+		
+		try {iter.remove(); fail();} catch(IllegalStateException e){}
+		try {iter.set("nope"); fail();} catch(IllegalStateException e){}
+		try {iter.previous(); fail();} catch(NoSuchElementException e){}
+		
+		iter.add("new");
+		liststring = "[new, fiddle, A, stick, really, small, big, foo, deep, huh, oh, bar, pepper, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(14, dll.size());
+		
+		iter.add("what");
+		liststring = "[new, what, fiddle, A, stick, really, small, big, foo, deep, huh, oh, bar, pepper, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(15, dll.size());
+		
+		iter = dll.listIterator(2);
+		assertEquals("fiddle", iter.next());
+		iter = dll.listIterator(12);
+		assertEquals("bar", iter.next());
+		iter.set("bat");
+		
+		liststring = "[new, what, fiddle, A, stick, really, small, big, foo, deep, huh, oh, bat, pepper, byte]";
+		assertEquals(liststring, dll.toString());
+		assertEquals(15, dll.size());
+		
+		while(iter.hasNext()){
+			iter.next();
+		}
+		try {iter.next(); fail();} catch(NoSuchElementException e){}
+		
+		try{dll.listIterator(20); fail();}catch(IndexOutOfBoundsException e){}
+		
+		try{dll.remove(-1); fail();}catch(IndexOutOfBoundsException e){}
+		
+		try{dll.remove(20); fail();}catch(IndexOutOfBoundsException e){}
+		
+		assertEquals("really", dll.remove(5));
+		assertEquals(14, dll.size());
+		
+		
+		
+		dll.clear();
+		assertEquals(0, dll.size());
+		assertEquals(null, dll.getHead());
+		assertEquals(null, dll.getTail());
+		
+		iter = dll.listIterator();
+		
+		iter.add("crystal");
+		
+		liststring = "[crystal]";
+		assertEquals(liststring, dll.toString());
+		
+		
 	}
 
 	@Test

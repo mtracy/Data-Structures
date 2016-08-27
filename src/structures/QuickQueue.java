@@ -12,20 +12,31 @@ public class QuickQueue<E> implements Queue<E> {
 	HashMap<E, Node<E>> map;
 	boolean hascapacity;
 	int capacity;
-	
 
+	/**
+	 * Similar to the LinkedHashMap class, the QuickQueue provides hashmap
+	 * properties with an ordering. It's default behavior resembles a LRU cache
+	 * where elements are added to the queue if they don't exist, but if the
+	 * queue is full the least recently used element is evicted to make room for
+	 * the new element. Therefore, the head of the queue is the least recently
+	 * used element in the queue.
+	 */
 	public QuickQueue() {
 		this.list = new DoubleLinkedList<E>();
 		this.map = new HashMap<E, Node<E>>();
 		this.hascapacity = false;
-		this.capacity = -1;		
+		this.capacity = -1;
 	}
-	
-	public QuickQueue(int capacity){
+
+	/***
+	 * Constructor for the QuickQueue. Capacity sets the capacity of the queue.
+	 * @param capacity
+	 */
+	public QuickQueue(int capacity) {
 		this.list = new DoubleLinkedList<E>();
 		this.map = new HashMap<E, Node<E>>();
 		this.hascapacity = true;
-		this.capacity = capacity;	
+		this.capacity = capacity;
 	}
 
 	@Override
@@ -80,7 +91,7 @@ public class QuickQueue<E> implements Queue<E> {
 			return true;
 		} else {
 			return false;
-		}		
+		}
 	}
 
 	@Override
@@ -97,12 +108,12 @@ public class QuickQueue<E> implements Queue<E> {
 		boolean modified = false;
 		Iterator<E> iter = iterator();
 		E curr;
-		while(iter.hasNext()){
+		while (iter.hasNext()) {
 			curr = iter.next();
-			if (!c.contains(curr)){
+			if (!c.contains(curr)) {
 				iter.remove();
 				map.remove(curr);
-				modified = true; 
+				modified = true;
 			}
 		}
 		return modified;
@@ -126,10 +137,10 @@ public class QuickQueue<E> implements Queue<E> {
 
 	@Override
 	public boolean add(Object o) {
-						
+
 		if (map.get(o) == null) {
 			if (this.hascapacity && this.size() == this.capacity)
-				throw new IllegalStateException(); 
+				throw new IllegalStateException();
 			E e = (E) o;
 			Node<E> n = new Node<E>(e);
 			list.add(n);
@@ -139,15 +150,16 @@ public class QuickQueue<E> implements Queue<E> {
 		}
 		return true;
 	}
-	
+
 	/***
-	 * Updates the object in the queue by removing if it exists
-	 * and appending it to the end of the queue
+	 * Updates the object in the queue by removing if it exists and appending it
+	 * to the end of the queue
 	 * 
-	 * @param o	The object to update in the queue
-	 * @throws	NoSuchElementException	if the object does not exist in the queue
-	 * @throws	ClassCastException		if the class of the specified element prevents it from being added to this queue
-	 * @throws 
+	 * @param o The object to update in the queue @throws NoSuchElementException
+	 * if the object does not exist in the queue @throws ClassCastException if
+	 * the class of the specified element prevents it from being added to this
+	 * queue 
+	 * @throws NoSuchElementException if the queue does not have the specified object
 	 */
 	public void update(Object o) {
 		Node<E> n = map.get(o);
@@ -161,15 +173,46 @@ public class QuickQueue<E> implements Queue<E> {
 	public E element() {
 		if (list.size() == 0)
 			throw new NoSuchElementException();
-		
+
 		return list.getHead().value;
 	}
 
 	@Override
 	public boolean offer(Object o) {
 		if (map.get(o) == null) {
-			if (this.hascapacity && this.size() == this.capacity)
-				return false; 
+			if (this.hascapacity && this.size() == this.capacity) {
+				return false;
+			}
+
+			E e = (E) o;
+			Node<E> n = new Node<E>(e);
+			list.add(n);
+			map.put(e, n);
+		} else {
+			update(o);
+		}
+		return true;
+	}
+
+	/**
+	 * Has the same properties as the standard offer method when evict is false,
+	 * but when evict is true, the head of the queue (the least recently used
+	 * element) is removed to make room for the offered object.
+	 * 
+	 * @param o	the object to be added to the queue
+	 * @param evict	specifies whether or not to remove the LRU element if the queue is full
+	 * @return true if the queue was altered as a result of this method call. false otherwise.
+	 */
+	public boolean offer(Object o, boolean evict) {
+		if (map.get(o) == null) {
+			if (this.hascapacity && this.size() == this.capacity) {
+				if (evict) {
+					remove();
+				} else {
+					return false;
+				}
+			}
+
 			E e = (E) o;
 			Node<E> n = new Node<E>(e);
 			list.add(n);
@@ -189,7 +232,7 @@ public class QuickQueue<E> implements Queue<E> {
 	public E poll() {
 		if (list.size() == 0)
 			return null;
-		
+
 		E toremove = list.remove(0);
 		map.remove(toremove);
 		return toremove;
@@ -199,12 +242,12 @@ public class QuickQueue<E> implements Queue<E> {
 	public E remove() {
 		if (list.size() == 0)
 			throw new NoSuchElementException();
-		
+
 		E toremove = list.remove(0);
 		map.remove(toremove);
 		return toremove;
 	}
-	
+
 	public String toString() {
 		return list.toString();
 	}
