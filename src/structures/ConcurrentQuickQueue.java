@@ -6,45 +6,38 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Similar to the LinkedHashMap class, the QuickQueue provides hashmap
- * properties with an ordering. It's default behavior resembles a LRU queue
- * where elements are added to the queue if they don't exist, but if the
- * queue is full the least recently used element is evicted to make room for
- * the new element. Therefore, the head of the queue is the least recently
- * used element in the queue.
+ * Similar to the QuickQueue class but handles concurrent access to the data structure
  */
-public class QuickQueue<E> implements Queue<E>, Serializable {
+public class ConcurrentQuickQueue<E> extends QuickQueue<E> implements Serializable {
 
 	static final long serialVersionUID = 1;
 
-	DoubleLinkedList<E> list;
-	HashMap<E, Node<E>> map;
+	ConcurrentDoubleLinkedList<E> list;
+	ConcurrentHashMap<E, Node<E>> map;
 	boolean hascapacity;
 	int capacity;
 
 	/***
-	 * Default constructor for the QuickQueue. It creates an queue without an explicit capacity
-	 * though it maintains an LRU ordering with the least recently used element at the head of the 
-	 * queue.
+	 * Default constructor for the ConcurrentQuickQueue that provides a queue without a capacity
 	 */
-	public QuickQueue() {
-		this.list = new DoubleLinkedList<E>();
-		this.map = new HashMap<E, Node<E>>();
+	public ConcurrentQuickQueue() {
+		this.list = new ConcurrentDoubleLinkedList<E>();
+		this.map = new ConcurrentHashMap<E, Node<E>>();
 		this.hascapacity = false;
 		this.capacity = -1;
 	}
 
 	/***
-	 * Constructor for the QuickQueue. Capacity sets the capacity of the queue.
+	 * Constructor for the ConcurrentQuickQueue. Capacity sets the capacity of the queue.
 	 * 
 	 * @param capacity
 	 */
-	public QuickQueue(int capacity) {
-		this.list = new DoubleLinkedList<E>();
-		this.map = new HashMap<E, Node<E>>();
+	public ConcurrentQuickQueue(int capacity) {
+		this.list = new ConcurrentDoubleLinkedList<E>();
+		this.map = new ConcurrentHashMap<E, Node<E>>();
 		this.hascapacity = true;
 		this.capacity = capacity;
 	}
@@ -268,5 +261,20 @@ public class QuickQueue<E> implements Queue<E>, Serializable {
 		return list.toString();
 	}
 
+	/*
+	 * 
+	 * public static void main(String[] args){ Runnable runnable = new
+	 * Runnable() { public void run() {
+	 * System.out.println("Hello in the future - " + new Date()); } }; //create
+	 * anonymous inner class that implements Runnable
+	 * 
+	 * //create a threadpool with 5 available threads ScheduledExecutorService
+	 * futurethreads = Executors.newScheduledThreadPool(5); //Launch the thread
+	 * at 10 seconds in the future futurethreads.schedule( runnable, 10,
+	 * TimeUnit.SECONDS ); System.out.println("Hello from now - " + new Date());
+	 * 
+	 * 
+	 * }
+	 */
 
 }

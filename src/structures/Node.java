@@ -1,5 +1,10 @@
 package structures;
-public class Node<V> {
+
+import java.io.Serializable;
+
+public class Node<V> implements Serializable {
+
+	static final long serialVersionUID = 1;
 	V value;
 	Node<V> next;
 	Node<V> prev;

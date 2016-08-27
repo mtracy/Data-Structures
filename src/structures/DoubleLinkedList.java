@@ -1,12 +1,15 @@
 package structures;
 
+import java.io.Serializable;
 import java.util.AbstractSequentialList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements List<E> {
+public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements List<E>, Serializable {
+
+	static final long serialVersionUID = 1;
 
 	private Node<E> head;
 	private Node<E> tail;
@@ -14,6 +17,8 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 
 	public DoubleLinkedList() {
 		this.head = null;
+		this.tail = null;
+		this.size = 0;
 	}
 
 	public Node<E> getHead() {
@@ -55,7 +60,7 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 			n.prev = this.tail;
 			n.next = null;
 			this.tail = n;
-			
+
 		}
 		this.size++;
 		return true;
@@ -324,7 +329,7 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 						curr = curr.prev;
 					}
 				}
-				previous = current.prev;
+				previous = curr.prev;
 				current = curr;
 
 			}
@@ -332,7 +337,7 @@ public class DoubleLinkedList<E> extends AbstractSequentialList<E> implements Li
 
 		@Override
 		public void add(E e) {
-			if (size == 0){
+			if (size == 0) {
 				current = null;
 				previous = new Node<E>(e);
 				previous.next = current;
